@@ -80,9 +80,11 @@ const uploadImage = async (
     return imageUrl;
 };
 
-const fetchDashboardScreenshot = async (url: string): Promise<Buffer> => {
+const fetchDashboardScreenshot = async (urls: string): Promise<Buffer> => {
     let browser;
 
+    const url =
+        'http://lightdash-dev:3000/projects/3675b69e-8324-4110-bdca-059031aa8da3/dashboards/a972e221-f022-448c-8c14-14f89f9470c7/view';
     try {
         const browserWSEndpoint = `ws://${process.env.HEADLESS_BROWSER_HOST}:${process.env.HEADLESS_BROWSER_PORT}`;
         browser = await puppeteer.connect({
@@ -90,12 +92,14 @@ const fetchDashboardScreenshot = async (url: string): Promise<Buffer> => {
         });
 
         const page = await browser.newPage();
+        const cookie =
+            'rl_anonymous_id=RudderEncrypt%3AU2FsdGVkX18uNUo3tdlPmNbDZgtywZSDg%2BlX%2B1oCGxnMd0qPgqbCQWY2wBm7r5ltdOdtIjnI%2Fa5TEafqijduBg%3D%3D; rl_page_init_referrer=RudderEncrypt%3AU2FsdGVkX18yumUlxjrpd6DdP16xtaOG5ycLSkoaLKo%3D; rl_page_init_referring_domain=RudderEncrypt%3AU2FsdGVkX1%2FPIUhDsxuZUeyGQIXCFp7fI%2BzGAvtN7Ro%3D; intercom-id-zppxyjpp=78f60bf4-1ef7-4ffb-ad37-94b82573e6ac; intercom-session-zppxyjpp=YlVWUzA5TXJnZWZtT3RoM0JJQlFLYjRQSUROZ0luNlg4QU5pOGlBSVpEbDg0M0JMSm5RYkd5eFlZbVZLc3EzUC0tMzR1UE9yNDhNNmhlS3dCd3BoejdyZz09--0507e0ac9828b9149fe52c614728dc2e94f987d1; rl_user_id=RudderEncrypt%3AU2FsdGVkX18%2BaQI5qSrAB6alFhkEzgfYftbcbs0iFPu6CINN4IDX7i0h%2F7suSoTo84%2BpX%2FoVSCcCDzZTfQSlnQ%3D%3D; rl_trait=RudderEncrypt%3AU2FsdGVkX1885pSMbqtS3eGbN0yHjEuPvKCV%2BrsvuQs%3D; rl_group_id=RudderEncrypt%3AU2FsdGVkX19gaQH2MRUP32qQGk%2BsOJXUEPUPW0Y9p8E%3D; rl_group_trait=RudderEncrypt%3AU2FsdGVkX1%2BrrEFKPwf9rj6vir5TUxYzBfhl1IOQGYU%3D; remember_token_P5000=rephus|1666800205.726758|7cec7c860b67b34c8731ac3f327e0fee4366b0df46180fe931ed865d73ff436ef7864cb6b8acd9059bd509d34adfef77781ad2823f4f6399e88d508facd1df54; intercom-device-id-zppxyjpp=7a838067-0ef1-4353-937d-89be702cef02; amplitude_id=eyJkZXZpY2VJZCI6Ijg4NTU1YjFhLWIxMWUtNDAwZC1hNWMyLTc2YjllMzNjN2RkOSIsInVzZXJJZCI6bnVsbCwib3B0T3V0IjpmYWxzZX0=; _ga=GA1.1.2025871266.1669302165; connect.sid=s%3AvJJCUqbRzIXbinMg7vuZOgxIRtlY9leO.4w73M%2Bn9Nut22rc0E2b%2FJa4nFcJdAIRjEUo44qYDc4c';
+        await page.setExtraHTTPHeaders({ cookie });
 
         await page.setViewport({
             width: 1024,
             height: 768, // hardcoded
         });
-
         const blockedUrls = [
             'headwayapp.co',
             'rudderlabs.com',
@@ -234,7 +238,7 @@ export class SlackService {
     private async parseUrl(
         linkUrl: string,
     ): Promise<{ isValid: boolean; isDashboard?: boolean; url: string }> {
-        if (!linkUrl.startsWith(this.lightdashConfig.siteUrl)) {
+        /* if (!linkUrl.startsWith(this.lightdashConfig.siteUrl)) {
             console.warn(
                 `URL to unfurl ${linkUrl} does not belong to this siteUrl ${this.lightdashConfig.siteUrl}, ignoring.`,
             );
@@ -242,7 +246,7 @@ export class SlackService {
                 isValid: false,
                 url: linkUrl,
             };
-        }
+        } */
 
         const shareUrl = new RegExp(`/share/${nanoid}`);
         const url = linkUrl.match(shareUrl)
