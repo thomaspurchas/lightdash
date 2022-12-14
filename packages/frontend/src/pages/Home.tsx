@@ -7,6 +7,7 @@ import { PageContentWrapper } from '../components/common/Page/Page.styles';
 import ForbiddenPanel from '../components/ForbiddenPanel';
 import LandingPanel from '../components/Home/LandingPanel';
 import OnboardingPanel from '../components/Home/OnboardingPanel/index';
+import Sidebar from '../components/Sidebar';
 import {
     useOnboardingStatus,
     useProjectSavedChartStatus,
@@ -65,6 +66,7 @@ const Home: FC = () => {
 
     return (
         <Page>
+            <Sidebar />
             <PageContentWrapper>
                 {!onboarding.data.ranQuery ? (
                     <OnboardingPanel
